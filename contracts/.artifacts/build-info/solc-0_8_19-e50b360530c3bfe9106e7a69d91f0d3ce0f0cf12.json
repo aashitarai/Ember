@@ -1,0 +1,40 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_19-e50b360530c3bfe9106e7a69d91f0d3ce0f0cf12",
+  "solcVersion": "0.8.19",
+  "solcLongVersion": "0.8.19+commit.7dd6d404",
+  "compilerType": "solc",
+  "userSourceNameMap": {
+    "contracts/contracts/KizunaPool.sol": "project/contracts/contracts/KizunaPool.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "paris",
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/contracts/KizunaPool.sol": {
+        "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.19;\n\n/// @notice Accountability pools (native token). Simplified for local/testing.\ncontract KizunaPool {\n    struct Pool {\n        string name;\n        uint256 stakeAmount;\n        address creator;\n        address[] members;\n        uint256 startTs;\n        uint256 periodDays;\n        bool active;\n    }\n\n    uint256 public nextPoolId = 1;\n    mapping(uint256 => Pool) public pools;\n    mapping(uint256 => mapping(address => bool)) public isMember;\n    mapping(uint256 => mapping(address => uint256)) public lastCheckinDay;\n\n    event PoolCreated(uint256 indexed poolId, string name, uint256 stakeAmount, address indexed creator);\n    event Joined(uint256 indexed poolId, address indexed member);\n    event CheckedIn(uint256 indexed poolId, address indexed member, uint256 dayIndex);\n    event RewardsDistributed(uint256 indexed poolId, bool yieldHitApplied);\n\n    function createPool(string calldata name, uint256 stakeAmount, address[] calldata initialMembers) external returns (uint256) {\n        require(stakeAmount > 0, \"stake=0\");\n        uint256 poolId = nextPoolId++;\n\n        Pool storage p = pools[poolId];\n        p.name = name;\n        p.stakeAmount = stakeAmount;\n        p.creator = msg.sender;\n        p.startTs = block.timestamp;\n        p.periodDays = 30;\n        p.active = true;\n\n        _addMember(poolId, msg.sender);\n        for (uint256 i = 0; i < initialMembers.length; i++) {\n            if (initialMembers[i] != address(0)) _addMember(poolId, initialMembers[i]);\n        }\n\n        emit PoolCreated(poolId, name, stakeAmount, msg.sender);\n        return poolId;\n    }\n\n    function joinPool(uint256 poolId) external payable {\n        Pool storage p = pools[poolId];\n        require(p.active, \"inactive\");\n        require(!isMember[poolId][msg.sender], \"already\");\n        require(msg.value == p.stakeAmount, \"bad_amount\");\n        _addMember(poolId, msg.sender);\n        emit Joined(poolId, msg.sender);\n    }\n\n    function checkIn(uint256 poolId) external {\n        Pool storage p = pools[poolId];\n        require(p.active, \"inactive\");\n        require(isMember[poolId][msg.sender], \"not_member\");\n\n        uint256 dayIndex = ((block.timestamp - p.startTs) / 1 days) + 1;\n        require(lastCheckinDay[poolId][msg.sender] != dayIndex, \"already_today\");\n        lastCheckinDay[poolId][msg.sender] = dayIndex;\n\n        emit CheckedIn(poolId, msg.sender, dayIndex);\n    }\n\n    function distributeRewards(uint256 poolId) external {\n        Pool storage p = pools[poolId];\n        require(p.active, \"inactive\");\n        require(msg.sender == p.creator, \"only_creator\");\n\n        // Simplified: we only emit whether anyone missed at least one day in the period.\n        bool anyMiss = false;\n        uint256 endDay = ((block.timestamp - p.startTs) / 1 days) + 1;\n        for (uint256 i = 0; i < p.members.length; i++) {\n            address m = p.members[i];\n            if (lastCheckinDay[poolId][m] + 1 < endDay) {\n                anyMiss = true;\n                break;\n            }\n        }\n\n        emit RewardsDistributed(poolId, anyMiss);\n    }\n\n    function getMembers(uint256 poolId) external view returns (address[] memory) {\n        return pools[poolId].members;\n    }\n\n    function _addMember(uint256 poolId, address member) internal {\n        if (isMember[poolId][member]) return;\n        isMember[poolId][member] = true;\n        pools[poolId].members.push(member);\n    }\n}\n\n"
+      }
+    }
+  }
+}
