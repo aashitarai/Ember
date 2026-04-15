@@ -32,6 +32,9 @@ Ember combines **conversational AI** with **Web3 incentives** to make financial 
 ---
 ## Talk Page
 <img width="1600" height="843" alt="image" src="https://github.com/user-attachments/assets/e3a61d78-c1eb-4d7f-ad41-98ca8343cc3f" />
+## Talk Page Report
+<img width="1600" height="893" alt="image" src="https://github.com/user-attachments/assets/e26044de-aac8-48e1-9625-3f78fe8443bd" />
+
 
 ## Vault Page
 <img width="1600" height="884" alt="image" src="https://github.com/user-attachments/assets/c82bfa5e-c7ac-423d-84ec-979e9d081e1d" />
@@ -40,7 +43,12 @@ Ember combines **conversational AI** with **Web3 incentives** to make financial 
 <img width="1600" height="828" alt="image" src="https://github.com/user-attachments/assets/9233490b-d4e8-4c55-bf77-46cd7a48a1fd" />
 
 ## Commitment Page
-<img width="1600" height="825" alt="image" src="https://github.com/user-attachments/assets/c55b4c54-6d02-4c79-b538-d72137a73e77" />
+<img width="1600" height="892" alt="image" src="https://github.com/user-attachments/assets/c0faafa4-0ade-4afa-ab72-e9ccee7c83e9" />
+
+## Commitment Strategy AI
+<img width="1600" height="893" alt="image" src="https://github.com/user-attachments/assets/33132590-4471-4e2a-9db8-fea9a827313c" />
+
+
 
 ## Pool Page
 <img width="1600" height="821" alt="image" src="https://github.com/user-attachments/assets/0cafb803-26dd-458a-a1ea-5a16e2b6aadc" />
